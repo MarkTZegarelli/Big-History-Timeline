@@ -108,7 +108,7 @@ export const PREDEFINED_EVENTS = [
     id: 'evt_08',
     title: 'Photosynthesis Evolves',
     description:
-      'Cyanobacteria evolved the ability to split water molecules using sunlight, releasing oxygen as a by-product. This revolutionary metabolism would eventually transform Earth's atmosphere in the Great Oxidation Event.',
+      'Cyanobacteria evolved the ability to split water molecules using sunlight, releasing oxygen as a by-product. This revolutionary metabolism would eventually transform Earth\'s atmosphere in the Great Oxidation Event.',
     yearsAgo: 2_700_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -118,7 +118,7 @@ export const PREDEFINED_EVENTS = [
     id: 'evt_09',
     title: 'Great Oxidation Event',
     description:
-      'Free oxygen began accumulating in Earth's atmosphere around 2.4 billion years ago, poisoning most anaerobic life but opening the door to aerobic respiration — far more energy-efficient — and setting the stage for complex life.',
+      'Free oxygen began accumulating in Earth\'s atmosphere around 2.4 billion years ago, poisoning most anaerobic life but opening the door to aerobic respiration — far more energy-efficient — and setting the stage for complex life.',
     yearsAgo: 2_400_000_000,
     category: CATEGORIES.GEOLOGICAL,
     isPredefined: true,
@@ -178,7 +178,7 @@ export const PREDEFINED_EVENTS = [
     id: 'evt_15',
     title: 'First Forests',
     description:
-      'Tall woody trees evolved and spread across continents, creating the world's first forests. Their massive uptake of CO₂ contributed to global cooling and a mass extinction — but also laid down the coal deposits powering the Industrial Revolution millions of years later.',
+      'Tall woody trees evolved and spread across continents, creating the world\'s first forests. Their massive uptake of CO₂ contributed to global cooling and a mass extinction — but also laid down the coal deposits powering the Industrial Revolution millions of years later.',
     yearsAgo: 385_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -188,7 +188,7 @@ export const PREDEFINED_EVENTS = [
     id: 'evt_16',
     title: 'Permian–Triassic Extinction',
     description:
-      'The Great Dying (~252 Ma) wiped out ~96% of marine species and ~70% of land vertebrates — Earth's largest mass extinction. Triggered by massive Siberian Traps volcanism, it reset the biosphere and opened niches for reptiles.',
+      'The Great Dying (~252 Ma) wiped out ~96% of marine species and ~70% of land vertebrates — Earth\'s largest mass extinction. Triggered by massive Siberian Traps volcanism, it reset the biosphere and opened niches for reptiles.',
     yearsAgo: 252_000_000,
     category: CATEGORIES.GEOLOGICAL,
     isPredefined: true,
@@ -348,7 +348,7 @@ export const PREDEFINED_EVENTS = [
     id: 'evt_32',
     title: 'Scientific Revolution',
     description:
-      'Copernicus, Galileo, Kepler, Newton and others dismantled the Aristotelian worldview and established the scientific method — empirical observation, mathematics, and falsifiable hypotheses — as humanity's most powerful tool for understanding nature.',
+      'Copernicus, Galileo, Kepler, Newton and others dismantled the Aristotelian worldview and established the scientific method — empirical observation, mathematics, and falsifiable hypotheses — as humanity\'s most powerful tool for understanding nature.',
     yearsAgo: 450,
     category: CATEGORIES.MODERN,
     isPredefined: true,
