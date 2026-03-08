@@ -1,6 +1,9 @@
 /**
  * events.js
  * Predefined Big History events and category definitions.
+ *
+ * Historical categories are nested by scope:
+ *   🌏 World History  ⊃  ⚜️ Western Civilization  ⊃  🦅 US History
  */
 
 // ---------------------------------------------------------------------------
@@ -8,37 +11,47 @@
 // ---------------------------------------------------------------------------
 
 export const CATEGORIES = {
-  COSMIC:      'cosmic',
-  GEOLOGICAL:  'geological',
-  BIOLOGICAL:  'biological',
-  HUMAN:       'human',
-  MODERN:      'modern',
-  CUSTOM:      'custom',
+  COSMIC:     'cosmic',
+  GEOLOGICAL: 'geological',
+  BIOLOGICAL: 'biological',
+  WORLD:      'world',     // World Historical Events — major civilizations
+  WESTERN:    'western',   // Western Civilization — Greece through modern Europe
+  US:         'us',        // US History
+  CUSTOM:     'custom',
 };
 
 export const CATEGORY_META = {
-  [CATEGORIES.COSMIC]:     { label: 'Cosmic',      emoji: '🌌', color: '#7B68EE' },
-  [CATEGORIES.GEOLOGICAL]: { label: 'Geological',  emoji: '🌍', color: '#CD853F' },
-  [CATEGORIES.BIOLOGICAL]: { label: 'Biological',  emoji: '🧬', color: '#3CB371' },
-  [CATEGORIES.HUMAN]:      { label: 'Human',       emoji: '👤', color: '#FF8C00' },
-  [CATEGORIES.MODERN]:     { label: 'Modern',      emoji: '🏭', color: '#DC143C' },
-  [CATEGORIES.CUSTOM]:     { label: 'My Notes',    emoji: '📌', color: '#20B2AA' },
+  [CATEGORIES.COSMIC]:     { label: 'Cosmic',       emoji: '🌌', color: '#7B68EE' },
+  [CATEGORIES.GEOLOGICAL]: { label: 'Geological',   emoji: '🪨', color: '#CD853F' },
+  [CATEGORIES.BIOLOGICAL]: { label: 'Biological',   emoji: '🧬', color: '#3CB371' },
+  [CATEGORIES.WORLD]:      { label: 'World History',emoji: '🌏', color: '#E8A838' },
+  [CATEGORIES.WESTERN]:    { label: 'Western Civ',  emoji: '⚜️', color: '#4A7BC4' },
+  [CATEGORIES.US]:         { label: 'US History',   emoji: '🦅', color: '#C53A3A' },
+  [CATEGORIES.CUSTOM]:     { label: 'My Notes',     emoji: '📌', color: '#20B2AA' },
 };
+
+/** Nesting order for filter UI: each entry is [parent, child] */
+export const CATEGORY_NESTING = [
+  [CATEGORIES.WORLD, CATEGORIES.WESTERN],
+  [CATEGORIES.WESTERN, CATEGORIES.US],
+];
 
 export function getCategoryColor(category) {
   return CATEGORY_META[category]?.color ?? CATEGORY_META[CATEGORIES.CUSTOM].color;
 }
 
 // ---------------------------------------------------------------------------
-// Predefined events — ordered from oldest to newest
+// Predefined events — ordered oldest → newest
 // ---------------------------------------------------------------------------
 
 export const PREDEFINED_EVENTS = [
+
+  // ── COSMIC ────────────────────────────────────────────────────────────────
+
   {
     id: 'evt_01',
     title: 'Big Bang',
-    description:
-      'The universe exploded into existence ~13.8 billion years ago from an infinitely dense singularity. In the first fraction of a second, fundamental forces separated, quarks combined into protons and neutrons, and the stage was set for everything that followed.',
+    description: `The universe exploded into existence ~13.8 billion years ago from an infinitely dense singularity. In the first fraction of a second, fundamental forces separated, quarks combined into protons and neutrons, and the stage was set for everything that followed.`,
     yearsAgo: 13_800_000_000,
     category: CATEGORIES.COSMIC,
     isPredefined: true,
@@ -47,8 +60,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_02',
     title: 'First Stars Ignite',
-    description:
-      'Roughly 200–300 million years after the Big Bang, the first generation of massive stars (Population III) ignited in clouds of hydrogen and helium, flooding the universe with light for the first time and beginning nucleosynthesis of heavier elements.',
+    description: `Roughly 200–300 million years after the Big Bang, the first generation of massive stars (Population III) ignited in clouds of hydrogen and helium, flooding the universe with light for the first time and beginning nucleosynthesis of heavier elements.`,
     yearsAgo: 13_500_000_000,
     category: CATEGORIES.COSMIC,
     isPredefined: true,
@@ -57,18 +69,19 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_03',
     title: 'Milky Way Galaxy Forms',
-    description:
-      'Our home galaxy began assembling through gravitational attraction and galaxy mergers. Over billions of years it built up its spiral structure, star clusters, and supermassive black hole at its centre.',
+    description: `Our home galaxy began assembling through gravitational attraction and galaxy mergers. Over billions of years it built up its spiral structure, star clusters, and supermassive black hole at its centre.`,
     yearsAgo: 13_000_000_000,
     category: CATEGORIES.COSMIC,
     isPredefined: true,
     isMajor: false,
   },
+
+  // ── GEOLOGICAL ────────────────────────────────────────────────────────────
+
   {
     id: 'evt_04',
     title: 'Solar System Forms',
-    description:
-      'A shock wave from a nearby supernova triggered the collapse of a molecular cloud, forming the Sun and the protoplanetary disk from which Earth and the other planets coalesced over millions of years.',
+    description: `A shock wave from a nearby supernova triggered the collapse of a molecular cloud, forming the Sun and the protoplanetary disk from which Earth and the other planets coalesced over millions of years.`,
     yearsAgo: 4_600_000_000,
     category: CATEGORIES.GEOLOGICAL,
     isPredefined: true,
@@ -77,8 +90,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_05',
     title: 'Earth & Moon Form',
-    description:
-      'Earth accreted and differentiated into core, mantle, and crust. The Moon likely formed when a Mars-sized body (Theia) struck the young Earth, throwing debris into orbit that coalesced into our Moon.',
+    description: `Earth accreted and differentiated into core, mantle, and crust. The Moon likely formed when a Mars-sized body (Theia) struck the young Earth, throwing debris into orbit that coalesced into our Moon.`,
     yearsAgo: 4_540_000_000,
     category: CATEGORIES.GEOLOGICAL,
     isPredefined: true,
@@ -87,8 +99,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_06',
     title: 'Late Heavy Bombardment',
-    description:
-      'A period of intense meteorite impacts (~4.1–3.8 Ga) pummelled the inner solar system. Despite the violence, water and complex organic molecules may have been delivered to Earth during this era.',
+    description: `A period of intense meteorite impacts (~4.1–3.8 Ga) pummelled the inner solar system. Despite the violence, water and complex organic molecules may have been delivered to Earth during this era.`,
     yearsAgo: 3_900_000_000,
     category: CATEGORIES.GEOLOGICAL,
     isPredefined: true,
@@ -97,38 +108,37 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_07',
     title: 'First Life on Earth',
-    description:
-      'Chemical traces and microfossils suggest life emerged in the oceans as early as 3.8–4.0 billion years ago. These earliest organisms were simple prokaryotes living in a world of volcanic activity and no free oxygen.',
+    description: `Chemical traces and microfossils suggest life emerged in the oceans as early as 3.8–4.0 billion years ago. These earliest organisms were simple prokaryotes living in a world of volcanic activity and no free oxygen.`,
     yearsAgo: 3_800_000_000,
-    category: CATEGORIES.BIOLOGICAL,
+    category: CATEGORIES.GEOLOGICAL,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_08',
     title: 'Photosynthesis Evolves',
-    description:
-      'Cyanobacteria evolved the ability to split water molecules using sunlight, releasing oxygen as a by-product. This revolutionary metabolism would eventually transform Earth\'s atmosphere in the Great Oxidation Event.',
+    description: `Cyanobacteria evolved the ability to split water molecules using sunlight, releasing oxygen as a by-product. This revolutionary metabolism would eventually transform Earth\'s atmosphere in the Great Oxidation Event.`,
     yearsAgo: 2_700_000_000,
-    category: CATEGORIES.BIOLOGICAL,
+    category: CATEGORIES.GEOLOGICAL,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_09',
     title: 'Great Oxidation Event',
-    description:
-      'Free oxygen began accumulating in Earth\'s atmosphere around 2.4 billion years ago, poisoning most anaerobic life but opening the door to aerobic respiration — far more energy-efficient — and setting the stage for complex life.',
+    description: `Free oxygen began accumulating in Earth\'s atmosphere around 2.4 billion years ago, poisoning most anaerobic life but opening the door to aerobic respiration and setting the stage for complex life.`,
     yearsAgo: 2_400_000_000,
     category: CATEGORIES.GEOLOGICAL,
     isPredefined: true,
     isMajor: true,
   },
+
+  // ── BIOLOGICAL ────────────────────────────────────────────────────────────
+
   {
     id: 'evt_10',
     title: 'First Eukaryotes',
-    description:
-      'Cells with a nucleus and membrane-bound organelles emerged, likely through endosymbiosis — one prokaryote engulfing another to create mitochondria. This unlocked dramatically greater cellular complexity.',
+    description: `Cells with a nucleus and membrane-bound organelles emerged, likely through endosymbiosis. This unlocked dramatically greater cellular complexity and paved the way for all multicellular life.`,
     yearsAgo: 2_100_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -137,18 +147,16 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_11',
     title: 'Snowball Earth',
-    description:
-      'Between ~720–635 million years ago, Earth may have been entirely or nearly entirely frozen over. The eventual thaw, driven by volcanic CO₂ build-up, triggered a burst of evolutionary innovation.',
+    description: `Between ~720–635 million years ago, Earth may have been entirely or nearly entirely frozen over. The eventual thaw triggered a burst of evolutionary innovation that preceded the Cambrian explosion.`,
     yearsAgo: 720_000_000,
-    category: CATEGORIES.GEOLOGICAL,
+    category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
     isMajor: false,
   },
   {
     id: 'evt_12',
     title: 'Multicellular Life Emerges',
-    description:
-      'Colonies of cells began dividing labour: some cells specialized for reproduction, others for feeding or movement. This innovation ultimately gave rise to tissues, organs, and the spectacular diversity of animal life.',
+    description: `Colonies of cells began dividing labour — some specialising for reproduction, others for feeding or movement. This innovation ultimately gave rise to tissues, organs, and the spectacular diversity of animal life.`,
     yearsAgo: 600_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -157,8 +165,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_13',
     title: 'Cambrian Explosion',
-    description:
-      'Over roughly 20 million years (~541–520 Ma), most major animal body plans appeared in the fossil record, including the first eyes, shells, and bilateral symmetry. The ancestors of all vertebrates appear here.',
+    description: `Over roughly 20 million years (~541–520 Ma), most major animal body plans appeared in the fossil record, including the first eyes, shells, and bilateral symmetry. The ancestors of all vertebrates appear here.`,
     yearsAgo: 541_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -167,8 +174,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_14',
     title: 'Plants Colonise Land',
-    description:
-      'Descendants of green algae evolved adaptations for terrestrial life, radically changing land ecosystems, drawing down CO₂, and creating the rich soils that support all land life today.',
+    description: `Descendants of green algae evolved adaptations for terrestrial life, radically changing land ecosystems, drawing down CO₂, and creating the rich soils that support all land life today.`,
     yearsAgo: 470_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -177,8 +183,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_15',
     title: 'First Forests',
-    description:
-      'Tall woody trees evolved and spread across continents, creating the world\'s first forests. Their massive uptake of CO₂ contributed to global cooling and a mass extinction — but also laid down the coal deposits powering the Industrial Revolution millions of years later.',
+    description: `Tall woody trees evolved and spread across continents, creating the world\'s first forests. Their massive uptake of CO₂ contributed to global cooling and eventually laid down the coal deposits of the Industrial Revolution.`,
     yearsAgo: 385_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -187,18 +192,16 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_16',
     title: 'Permian–Triassic Extinction',
-    description:
-      'The Great Dying (~252 Ma) wiped out ~96% of marine species and ~70% of land vertebrates — Earth\'s largest mass extinction. Triggered by massive Siberian Traps volcanism, it reset the biosphere and opened niches for reptiles.',
+    description: `The Great Dying (~252 Ma) wiped out ~96% of marine species and ~70% of land vertebrates — Earth\'s largest mass extinction. Triggered by massive Siberian Traps volcanism, it reset the biosphere and opened niches for reptiles.`,
     yearsAgo: 252_000_000,
-    category: CATEGORIES.GEOLOGICAL,
+    category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_17',
     title: 'Dinosaurs Appear',
-    description:
-      'Dinosaurs evolved from archosaurs in the Triassic and diversified rapidly after the Permian–Triassic extinction to become the dominant land vertebrates for over 160 million years.',
+    description: `Dinosaurs evolved from archosaurs in the Triassic and diversified rapidly to become the dominant land vertebrates for over 160 million years.`,
     yearsAgo: 240_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -207,8 +210,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_18',
     title: 'First Mammals',
-    description:
-      'Small, shrew-like mammals evolved from therapsid reptiles. They survived alongside dinosaurs for 160 million years, mostly small and nocturnal, accumulating the traits — warm blood, hair, live birth — that would later drive their explosion in diversity.',
+    description: `Small, shrew-like mammals evolved from therapsid reptiles. They survived alongside dinosaurs for 160 million years, mostly small and nocturnal, accumulating traits — warm blood, hair, live birth — that would later drive their explosion in diversity.`,
     yearsAgo: 225_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -217,8 +219,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_19',
     title: 'Flowering Plants Evolve',
-    description:
-      'Angiosperms (flowering plants) appeared and diversified explosively, co-evolving with insects for pollination. They now make up ~90% of land plant species and form the base of most terrestrial food webs.',
+    description: `Angiosperms appeared and diversified explosively, co-evolving with insects for pollination. They now make up ~90% of land plant species and form the base of most terrestrial food webs.`,
     yearsAgo: 130_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -227,18 +228,16 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_20',
     title: 'K–Pg Mass Extinction',
-    description:
-      'A 10 km asteroid struck the Yucatán Peninsula, triggering firestorms, tsunamis, and a nuclear winter. Non-avian dinosaurs and ~75% of species vanished. Surviving mammals rapidly diversified into the ecological niches left empty.',
+    description: `A 10 km asteroid struck the Yucatán Peninsula, triggering firestorms, tsunamis, and a nuclear winter. Non-avian dinosaurs and ~75% of species vanished. Surviving mammals rapidly diversified into the vacant ecological niches.`,
     yearsAgo: 66_000_000,
-    category: CATEGORIES.GEOLOGICAL,
+    category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_21',
     title: 'First Primates',
-    description:
-      'Small, tree-dwelling primates evolved in the Paleocene with grasping hands, forward-facing eyes for depth perception, and relatively large brains — adaptations that would eventually lead to humans.',
+    description: `Small, tree-dwelling primates evolved in the Paleocene with grasping hands, forward-facing eyes for depth perception, and relatively large brains — adaptations that would eventually lead to humans.`,
     yearsAgo: 55_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -247,8 +246,7 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_22',
     title: 'Apes Diverge from Monkeys',
-    description:
-      'The lineage leading to apes (including humans) split from Old World monkeys. Apes lost their tails and developed greater cognitive flexibility, setting the stage for the hominin line.',
+    description: `The lineage leading to apes (including humans) split from Old World monkeys. Apes lost their tails and developed greater cognitive flexibility, setting the stage for the hominin line.`,
     yearsAgo: 25_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
@@ -257,130 +255,417 @@ export const PREDEFINED_EVENTS = [
   {
     id: 'evt_23',
     title: 'Human–Chimp Last Common Ancestor',
-    description:
-      'The lineages leading to humans and chimpanzees diverged. Our ancestors began walking upright (bipedalism), freeing the hands for tool use and reshaping the pelvis, skull, and brain over millions of years.',
+    description: `The lineages leading to humans and chimpanzees diverged. Our ancestors began walking upright (bipedalism), freeing the hands for tool use and reshaping the pelvis, skull, and brain over millions of years.`,
     yearsAgo: 6_000_000,
     category: CATEGORIES.BIOLOGICAL,
     isPredefined: true,
     isMajor: true,
   },
+
+  // ── WORLD HISTORY ─────────────────────────────────────────────────────────
+
   {
     id: 'evt_24',
     title: 'Genus Homo Appears',
-    description:
-      'Early members of the genus Homo (H. habilis, H. ergaster) emerged in Africa with significantly larger brains and the systematic use of stone tools (Oldowan technology), marking the start of the archaeological record.',
+    description: `Early members of the genus Homo (H. habilis, H. ergaster) emerged in Africa with significantly larger brains and the systematic use of stone tools (Oldowan technology), marking the start of the archaeological record.`,
     yearsAgo: 2_800_000,
-    category: CATEGORIES.HUMAN,
+    category: CATEGORIES.WORLD,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_25',
     title: 'Fire Controlled by Hominins',
-    description:
-      'Homo erectus began controlling fire, enabling cooking (which unlocked more calories and drove brain growth), warmth, protection from predators, and communal activity after dark — transforming human social life.',
+    description: `Homo erectus began controlling fire, enabling cooking (which unlocked more calories and drove brain growth), warmth, protection from predators, and communal activity after dark — transforming human social life worldwide.`,
     yearsAgo: 1_000_000,
-    category: CATEGORIES.HUMAN,
+    category: CATEGORIES.WORLD,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_26',
     title: 'Modern Humans Emerge',
-    description:
-      'Anatomically modern Homo sapiens appeared in Africa, possessing the full capacity for symbolic thought, language, music, and complex social organisation — the cognitive toolkit for cultural evolution.',
+    description: `Anatomically modern Homo sapiens appeared in Africa, possessing the full capacity for symbolic thought, language, music, and complex social organisation — the cognitive toolkit for cultural evolution.`,
     yearsAgo: 300_000,
-    category: CATEGORIES.HUMAN,
+    category: CATEGORIES.WORLD,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_27',
     title: 'Out of Africa Migration',
-    description:
-      'Modern humans dispersed out of Africa in one or more waves, spreading across Eurasia, Australia, and eventually the Americas. They interbred with Neanderthals and Denisovans, whose DNA survives in many people today.',
+    description: `Modern humans dispersed out of Africa in one or more waves, spreading across Eurasia, Australia, and eventually the Americas. They interbred with Neanderthals and Denisovans, whose DNA survives in many people today.`,
     yearsAgo: 70_000,
-    category: CATEGORIES.HUMAN,
+    category: CATEGORIES.WORLD,
     isPredefined: true,
     isMajor: false,
   },
   {
     id: 'evt_28',
     title: 'Cave Art & Symbolic Culture',
-    description:
-      'Elaborate cave paintings, personal ornaments, and carved figurines proliferated, evidencing fully modern symbolic cognition, storytelling, and shared cultural meaning-making.',
+    description: `Elaborate cave paintings, personal ornaments, and carved figurines proliferated across Europe and beyond, evidencing fully modern symbolic cognition, storytelling, and shared cultural meaning-making.`,
     yearsAgo: 40_000,
-    category: CATEGORIES.HUMAN,
+    category: CATEGORIES.WORLD,
     isPredefined: true,
     isMajor: false,
   },
   {
     id: 'evt_29',
     title: 'Agricultural Revolution',
-    description:
-      'Humans independently began cultivating plants and domesticating animals in multiple regions (Fertile Crescent, China, Mesoamerica). Settled farming villages grew into the first towns and cities, enabling specialised labour and social complexity.',
+    description: `Humans independently began cultivating plants and domesticating animals in multiple regions — the Fertile Crescent, China, Mesoamerica, and elsewhere. Settled farming villages grew into towns, enabling specialised labour and social complexity.`,
     yearsAgo: 10_000,
-    category: CATEGORIES.HUMAN,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w01',
+    title: 'Rise of Mesopotamia',
+    description: `The world\'s first urban civilisation emerged between the Tigris and Euphrates rivers (modern Iraq). Sumerians built the first true cities — Uruk, Ur, Lagash — along with monumental temples (ziggurats), legal codes, and complex trade networks across the ancient Near East.`,
+    yearsAgo: 5_500,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w02',
+    title: 'Ancient Egypt & the Nile Civilisation',
+    description: `Egypt unified under a single pharaoh around 3100 BCE, initiating one of history\'s most enduring civilisations. The Nile\'s predictable floods enabled agricultural surplus, supporting pyramid construction, hieroglyphic writing, and sophisticated religious and administrative systems that lasted over 3,000 years.`,
+    yearsAgo: 5_100,
+    category: CATEGORIES.WORLD,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_30',
     title: 'Writing Invented',
-    description:
-      'Sumerian cuneiform (~3200 BCE) and Egyptian hieroglyphs enabled information to be stored outside human memory for the first time. Writing accelerated the accumulation and transmission of knowledge across generations.',
+    description: `Sumerian cuneiform (~3200 BCE) and Egyptian hieroglyphs enabled information to be stored outside human memory for the first time. Writing accelerated the accumulation and transmission of knowledge across generations.`,
     yearsAgo: 5_200,
-    category: CATEGORIES.HUMAN,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w03',
+    title: 'Silk Road & Global Trade Networks',
+    description: `By the Han Dynasty (~200 BCE), overland and maritime trade routes connected China, India, Persia, Arabia, and Rome, spreading not only silk and spices but also technologies, religions, languages, and diseases across Eurasia in the ancient world\'s first era of genuine globalisation.`,
+    yearsAgo: 2_200,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: false,
+  },
+  {
+    id: 'evt_w04',
+    title: 'Rise of Islam',
+    description: `Muhammad began preaching in Arabia around 610 CE. Within a century of his death (632 CE), Islamic caliphates stretched from Spain to Central Asia — the fastest territorial expansion in history. Islamic scholars preserved and advanced Greek philosophy, mathematics, medicine, and astronomy during Europe\'s early Middle Ages.`,
+    yearsAgo: 1_400,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w05',
+    title: 'Mongol Empire',
+    description: `Under Genghis Khan (1206) and his successors, the Mongols forged the largest contiguous land empire in history, stretching from the Pacific to Eastern Europe. While devastatingly violent, the Pax Mongolica connected East and West, facilitating the exchange of goods, ideas, and — tragically — the Black Death.`,
+    yearsAgo: 820,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w06',
+    title: 'Black Death',
+    description: `Bubonic plague swept from Central Asia into Europe (1347–1353), killing an estimated 30–60% of Europe\'s population and comparable proportions across the Middle East and Asia. The massive loss of life disrupted feudal structures, accelerated social change, and may have contributed to the conditions that made the Renaissance possible.`,
+    yearsAgo: 675,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w07',
+    title: 'Age of Exploration & Columbian Exchange',
+    description: `European seafarers — Portuguese, Spanish, Dutch, English — connected the globe\'s continents for the first time. The Columbian Exchange permanently transformed diets, economies, and ecologies on all continents, while also initiating centuries of colonisation, the Atlantic slave trade, and the near-destruction of indigenous American civilisations.`,
+    yearsAgo: 530,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w08',
+    title: 'World War I',
+    description: `The assassination of Archduke Franz Ferdinand in 1914 ignited a global conflict drawing in empires across Europe, the Middle East, Africa, and Asia. Over 20 million died. The war destroyed four empires (Ottoman, Austro-Hungarian, Russian, German), redrew the world map, and sowed the seeds of World War II.`,
+    yearsAgo: 110,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w09',
+    title: 'World War II',
+    description: `The deadliest conflict in human history (1939–1945), killing an estimated 70–85 million people. It ended with the Holocaust, the use of atomic bombs, and a fundamentally restructured world order — the United Nations, Bretton Woods institutions, decolonisation movements, and the beginning of the Cold War.`,
+    yearsAgo: 81,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_w10',
+    title: 'Digital Revolution & Internet',
+    description: `The development of transistors, integrated circuits, personal computers, and the World Wide Web created a global information network — compressing communication, enabling new economic models, and connecting billions of people across every nation.`,
+    yearsAgo: 55,
+    category: CATEGORIES.WORLD,
+    isPredefined: true,
+    isMajor: true,
+  },
+
+  // ── WESTERN CIVILIZATION ──────────────────────────────────────────────────
+
+  {
+    id: 'evt_wc01',
+    title: 'Athenian Democracy & Greek Philosophy',
+    description: `Athens introduced the world\'s first direct democracy around 507 BCE under Cleisthenes. In the same era, Socrates, Plato, and Aristotle developed foundational frameworks for logic, ethics, politics, and science that still shape Western thought. Greek tragedy, comedy, history, and rhetoric defined literary and intellectual traditions for millennia.`,
+    yearsAgo: 2_530,
+    category: CATEGORIES.WESTERN,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_31',
-    title: 'Classical Civilisations',
-    description:
-      'Greece, Rome, Persia, India (Maurya/Gupta), and China (Han) developed philosophy, law, mathematics, medicine, and trade networks that shaped much of modern thought and governance.',
+    title: 'Roman Republic & Empire',
+    description: `Rome evolved from a city-state republic (~509 BCE) into an empire spanning from Britain to Mesopotamia. Roman law, engineering (roads, aqueducts, concrete), Latin language, and administrative structures became the template for Western governance and the Catholic Church — shaping European civilisation for 2,000 years.`,
     yearsAgo: 2_500,
-    category: CATEGORIES.HUMAN,
+    category: CATEGORIES.WESTERN,
     isPredefined: true,
-    isMajor: false,
+    isMajor: true,
+  },
+  {
+    id: 'evt_wc02',
+    title: 'Rise of Christianity',
+    description: `Jesus of Nazareth preached in Roman-occupied Judea (~30 CE). His followers\' movement spread rapidly across the Roman Empire, becoming its official religion in 380 CE. Christianity shaped Western morality, art, science, politics, and culture throughout the medieval and modern periods.`,
+    yearsAgo: 2_000,
+    category: CATEGORIES.WESTERN,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_wc03',
+    title: 'Fall of Western Rome',
+    description: `In 476 CE, the last Roman emperor of the West was deposed by the Germanic chieftain Odoacer, conventionally marking the end of ancient Western civilisation and the start of the Middle Ages. The Eastern Roman (Byzantine) Empire survived another thousand years, preserving classical knowledge until the Ottoman conquest of Constantinople in 1453.`,
+    yearsAgo: 1_550,
+    category: CATEGORIES.WESTERN,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_wc04',
+    title: 'Magna Carta',
+    description: `Forced upon King John of England by rebellious barons in 1215, Magna Carta established for the first time that the king was subject to the rule of law. It planted the seeds of constitutional governance, habeas corpus, and the idea that government requires the consent of the governed — ideas that flow directly into the US Bill of Rights.`,
+    yearsAgo: 811,
+    category: CATEGORIES.WESTERN,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_wc05',
+    title: 'Renaissance',
+    description: `Beginning in 14th-century Italy and spreading across Europe, the Renaissance (French for "rebirth") revived classical Greco-Roman arts and learning, emphasising humanism, individualism, and empirical observation. Figures such as Leonardo da Vinci, Michelangelo, and Erasmus transformed art, literature, and scholarship, bridging the medieval and modern worlds.`,
+    yearsAgo: 650,
+    category: CATEGORIES.WESTERN,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_wc06',
+    title: 'Protestant Reformation',
+    description: `Martin Luther\'s 95 Theses (1517) challenged the authority of the Catholic Church, fracturing Western Christianity into dozens of competing denominations. The Reformation transformed religion, politics, and literacy across Europe, fuelled devastating wars of religion, and ultimately contributed to ideas about individual conscience and freedom of belief.`,
+    yearsAgo: 509,
+    category: CATEGORIES.WESTERN,
+    isPredefined: true,
+    isMajor: true,
   },
   {
     id: 'evt_32',
     title: 'Scientific Revolution',
-    description:
-      'Copernicus, Galileo, Kepler, Newton and others dismantled the Aristotelian worldview and established the scientific method — empirical observation, mathematics, and falsifiable hypotheses — as humanity\'s most powerful tool for understanding nature.',
+    description: `Copernicus, Galileo, Kepler, and Newton dismantled the Aristotelian worldview and established the scientific method — empirical observation, mathematics, and falsifiable hypotheses — as humanity\'s most powerful tool for understanding nature. This transformation in Western thought laid the groundwork for the Industrial Revolution and modern technology.`,
     yearsAgo: 450,
-    category: CATEGORIES.MODERN,
+    category: CATEGORIES.WESTERN,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_wc07',
+    title: 'Enlightenment',
+    description: `The 18th-century European Enlightenment championed reason, science, and individual rights over tradition and religious authority. Philosophers such as Locke, Voltaire, Rousseau, Montesquieu, and Kant reshaped ideas about government, liberty, and human progress — directly inspiring the American and French Revolutions.`,
+    yearsAgo: 310,
+    category: CATEGORIES.WESTERN,
     isPredefined: true,
     isMajor: true,
   },
   {
     id: 'evt_33',
     title: 'Industrial Revolution',
-    description:
-      'Steam power, mechanised textile mills, and iron production in Britain launched a transformation of energy use and economic organisation that spread globally, multiplying human productive capacity and beginning the fossil-fuel era.',
+    description: `Steam power, mechanised textile mills, and iron production in Britain launched a transformation of energy use and economic organisation that spread globally. It multiplied human productive capacity, drove urbanisation, began the fossil-fuel era, and eventually enabled the standard of living most people in wealthy countries now enjoy.`,
     yearsAgo: 250,
-    category: CATEGORIES.MODERN,
+    category: CATEGORIES.WESTERN,
     isPredefined: true,
     isMajor: true,
   },
   {
-    id: 'evt_34',
-    title: 'Digital Revolution & Internet',
-    description:
-      'The development of transistors, integrated circuits, personal computers, and the World Wide Web created a global information network, compressing the time needed to communicate, learn, and innovate.',
-    yearsAgo: 55,
-    category: CATEGORIES.MODERN,
+    id: 'evt_wc08',
+    title: 'French Revolution',
+    description: `Beginning in 1789, the French Revolution overthrew the monarchy, executed Louis XVI, and proclaimed the ideals of Liberty, Equality, and Fraternity. It permanently reshaped European politics, spread nationalist ideas across the continent, and produced Napoleon Bonaparte — whose wars redrew the map of Europe and spread revolutionary legal codes worldwide.`,
+    yearsAgo: 237,
+    category: CATEGORIES.WESTERN,
     isPredefined: true,
     isMajor: true,
   },
+  {
+    id: 'evt_wc09',
+    title: 'Cold War',
+    description: `The ideological, military, and economic rivalry between the United States and Soviet Union (1947–1991) divided the world into competing blocs, triggered proxy wars across Asia, Africa, and Latin America, drove the nuclear arms race, and shaped virtually every aspect of global politics for nearly half a century.`,
+    yearsAgo: 77,
+    category: CATEGORIES.WESTERN,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_wc10',
+    title: 'Fall of the Berlin Wall',
+    description: `On 9 November 1989 the Berlin Wall fell, symbolising the collapse of Soviet-backed communist regimes across Eastern Europe. Within two years the Soviet Union itself dissolved, ending the Cold War and expanding liberal democracy and free-market economics across the former Eastern Bloc — reshaping global geopolitics for the 21st century.`,
+    yearsAgo: 37,
+    category: CATEGORIES.WESTERN,
+    isPredefined: true,
+    isMajor: true,
+  },
+
+  // ── US HISTORY ────────────────────────────────────────────────────────────
+
+  {
+    id: 'evt_us01',
+    title: 'Columbus Reaches the Americas',
+    description: `Christopher Columbus\'s 1492 landfall in the Caribbean initiated sustained contact between Europe and the Americas, beginning a process of colonisation that would bring millions of European settlers and enslaved Africans to the New World while devastating indigenous populations through disease, warfare, and dispossession.`,
+    yearsAgo: 534,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_us02',
+    title: 'Jamestown — First Permanent English Colony',
+    description: `Founded in 1607 in present-day Virginia, Jamestown was England\'s first permanent settlement in North America. Chronic starvation, disease, and conflict with the Powhatan Confederacy nearly destroyed it, but the colony survived, introducing tobacco cultivation and, in 1619, the first enslaved Africans to British North America.`,
+    yearsAgo: 419,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: false,
+  },
+  {
+    id: 'evt_us03',
+    title: 'Declaration of Independence',
+    description: `On July 4, 1776, the Second Continental Congress declared the thirteen colonies independent from Britain. Authored primarily by Thomas Jefferson, the Declaration articulated Enlightenment ideals — that all men are created equal with unalienable rights to life, liberty, and the pursuit of happiness — which became a template for democratic revolutions worldwide.`,
+    yearsAgo: 250,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_us04',
+    title: 'US Constitution Ratified',
+    description: `Ratified in 1788 and taking effect in 1789, the US Constitution established a federal republic with separated powers, checks and balances, and (via the Bill of Rights) explicit protections for individual liberties. The world\'s oldest written national constitution still in effect, it became a model for constitutional governments worldwide.`,
+    yearsAgo: 237,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_us05',
+    title: 'Louisiana Purchase',
+    description: `In 1803, President Thomas Jefferson purchased approximately 828,000 square miles of territory from Napoleonic France for $15 million, effectively doubling the size of the United States and opening the continent for westward expansion — with profound and often devastating consequences for Native American nations.`,
+    yearsAgo: 223,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: false,
+  },
+  {
+    id: 'evt_us06',
+    title: 'Civil War & Emancipation',
+    description: `The Civil War (1861–1865) was the deadliest conflict in American history, claiming over 620,000 lives. It resolved the question of secession and, through Lincoln\'s Emancipation Proclamation (1863) and the 13th Amendment (1865), abolished the institution of slavery that had defined Southern society and economy since the colonial era.`,
+    yearsAgo: 163,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_us07',
+    title: 'Reconstruction & Jim Crow Era',
+    description: `Reconstruction (1865–1877) briefly extended political rights to freedmen; when federal troops withdrew, Southern states enacted Jim Crow laws enforcing racial segregation and disenfranchisement for nearly a century. This system of legal apartheid shaped American society, politics, and racial inequality well into the 20th century.`,
+    yearsAgo: 158,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: false,
+  },
+  {
+    id: 'evt_us08',
+    title: 'Industrialisation & the Gilded Age',
+    description: `The late 19th century saw the United States transformed by railroads, steel, oil, and electricity. Figures like Carnegie, Rockefeller, and Morgan built vast industrial empires, making America the world\'s largest economy by 1900 — while also producing extreme inequality, labour exploitation, and the political battles of the Progressive Era.`,
+    yearsAgo: 140,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: false,
+  },
+  {
+    id: 'evt_us09',
+    title: 'Great Depression & New Deal',
+    description: `The 1929 stock market crash triggered the worst economic downturn in US history: unemployment reached 25%, banks failed, and farmers lost their lands. Franklin Roosevelt\'s New Deal (1933–1939) reshaped the relationship between government and citizens, creating Social Security, banking regulation, and federal employment programmes that defined American governance for decades.`,
+    yearsAgo: 95,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_us10',
+    title: 'Pearl Harbor & US Entry into WWII',
+    description: `Japan\'s surprise attack on Pearl Harbor on December 7, 1941 killed 2,403 Americans and propelled the US into World War II on both fronts. American industrial power proved decisive: the US produced half the world\'s war materiel by 1944. The war ended with the US as a global superpower, with the atomic bombings of Hiroshima and Nagasaki opening the nuclear age.`,
+    yearsAgo: 84,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_us11',
+    title: 'Civil Rights Movement',
+    description: `From the Montgomery Bus Boycott (1955) through the Civil Rights Act (1964) and Voting Rights Act (1965), a mass movement led by Martin Luther King Jr., Rosa Parks, John Lewis, and millions of others dismantled the legal architecture of segregation and secured the formal political equality of Black Americans — the nation\'s second Reconstruction.`,
+    yearsAgo: 65,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_us12',
+    title: 'Moon Landing',
+    description: `On July 20, 1969, Apollo 11 astronauts Neil Armstrong and Buzz Aldrin became the first humans to walk on the Moon. The achievement represented the culmination of the Cold War space race, required the largest peacetime scientific mobilisation in history, and remains a defining symbol of human ambition and technological capability.`,
+    yearsAgo: 57,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+  {
+    id: 'evt_us13',
+    title: 'September 11 Attacks',
+    description: `Al-Qaeda\'s coordinated terrorist attacks on September 11, 2001 killed nearly 3,000 people and triggered a sweeping US response: the invasion of Afghanistan, the Iraq War, the creation of the Department of Homeland Security, and the Patriot Act. The attacks reshaped US foreign policy, civil liberties, airport security, and the global order for the following two decades.`,
+    yearsAgo: 24,
+    category: CATEGORIES.US,
+    isPredefined: true,
+    isMajor: true,
+  },
+
+  // ── TODAY ─────────────────────────────────────────────────────────────────
+
   {
     id: 'evt_35',
     title: 'Today',
-    description:
-      'You are here — at the frontier of 13.8 billion years of cosmic history. What comes next is, in part, up to you.',
+    description: `You are here — at the frontier of 13.8 billion years of cosmic history. What comes next is, in part, up to you.`,
     yearsAgo: 0,
-    category: CATEGORIES.MODERN,
+    category: CATEGORIES.WORLD,
     isPredefined: true,
     isMajor: true,
   },
