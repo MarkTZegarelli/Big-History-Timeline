@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Big History Timeline",
+    "slug": "big-history-timeline",
+    "version": "1.0.0",
+    "orientation": "landscape",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0D0D1A"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0D0D1A"
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
