@@ -294,6 +294,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
 const styles = {
   wrapper: {
     flex: 1,
+    minHeight: 0,          // don't let content push the flex item taller
     position: 'relative',
     backgroundColor: '#0D0D1A',
     overflow: 'hidden',
@@ -302,12 +303,13 @@ const styles = {
   },
   scrollContainer: {
     flex: 1,
+    height: 0,             // flex-grow sets the height; content can't override it
     overflowX: 'scroll',
     overflowY: 'hidden',
     cursor: 'crosshair',
   },
   content: {
-    minHeight: '100%',
+    height: '100%',        // fill the scroll container exactly — no vertical growth
     backgroundColor: '#0D0D1A',
     position: 'relative',
   },
