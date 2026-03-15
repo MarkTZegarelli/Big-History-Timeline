@@ -11,7 +11,8 @@ import React, { useState, useCallback, useMemo } from 'react';
 import Timeline     from './components/Timeline';
 import Filters      from './components/Filters';
 import AddNoteModal from './components/AddNoteModal';
-import { PREDEFINED_EVENTS } from './data/events';
+import { PREDEFINED_EVENTS, CATEGORY_SPAN_YEARS } from './data/events';
+import { zoomForSpan } from './utils/timeUtils';
 
 export default function App() {
   const [notes,        setNotes]        = useState(PREDEFINED_EVENTS);
@@ -32,6 +33,14 @@ export default function App() {
       prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
     );
   }, []);
+
+  // When one or more categories are active, zoom to fit the widest selected span.
+  const autoZoom = useMemo(() => {
+    if (selectedCats.length === 0) return null;
+    const spans = selectedCats.map((c) => CATEGORY_SPAN_YEARS[c]).filter(Boolean);
+    if (spans.length === 0) return null;
+    return zoomForSpan(Math.max(...spans));
+  }, [selectedCats]);
 
   // ── modal handlers ────────────────────────────────────────────────────────
 
@@ -99,6 +108,7 @@ export default function App() {
         notes={filteredNotes}
         onNotePress={openNoteDetail}
         onTimelinePress={openAddNote}
+        autoZoom={autoZoom}
       />
 
       {/* Note detail / create modal */}

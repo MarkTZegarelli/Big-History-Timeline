@@ -37,7 +37,7 @@ function clampZoom(z) {
   return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
 }
 
-export default function Timeline({ notes, onNotePress, onTimelinePress }) {
+export default function Timeline({ notes, onNotePress, onTimelinePress, autoZoom }) {
   const [zoom, setZoom]               = useState(MIN_ZOOM);
   const [scrollOffset, setScrollOffset] = useState(0);
 
@@ -76,6 +76,11 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
     zoomRef.current = z;
     setZoom(z);
   }, []);
+
+  // When the parent requests a specific zoom (e.g. from a filter selection), apply it.
+  useEffect(() => {
+    if (autoZoom != null) updateZoom(autoZoom);
+  }, [autoZoom, updateZoom]);
 
   // At zoom=1 the full content (timeline + 2×SIDE_PAD) fits exactly in the viewport.
   const timelineWidth = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD) * zoom;

@@ -30,6 +30,19 @@ export const CATEGORY_META = {
   [CATEGORIES.CUSTOM]:     { label: 'My Notes',     emoji: '📌', color: '#20B2AA' },
 };
 
+/**
+ * Oldest known event (years ago) for each predefined category.
+ * Used to auto-zoom when a filter is selected.
+ */
+export const CATEGORY_SPAN_YEARS = {
+  [CATEGORIES.COSMIC]:     13_800_000_000,
+  [CATEGORIES.GEOLOGICAL]:  4_600_000_000,
+  [CATEGORIES.BIOLOGICAL]:  2_100_000_000,
+  [CATEGORIES.WORLD]:           2_800_000,
+  [CATEGORIES.WESTERN]:             2_530,
+  [CATEGORIES.US]:                    534,
+};
+
 /** Nesting order for filter UI: each entry is [parent, child] */
 export const CATEGORY_NESTING = [
   [CATEGORIES.WORLD, CATEGORIES.WESTERN],

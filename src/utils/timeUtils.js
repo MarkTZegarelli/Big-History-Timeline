@@ -93,6 +93,19 @@ export function parseYearsAgo(str) {
 }
 
 // ---------------------------------------------------------------------------
+// Zoom helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute the zoom level that fits a given time span (~65% of the viewport).
+ * The 0.65 factor leaves breathing room so the span isn't wall-to-wall.
+ */
+export function zoomForSpan(spanYears) {
+  if (!spanYears || spanYears <= 0) return MIN_ZOOM;
+  return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, Math.round(TOTAL_YEARS * 0.65 / spanYears)));
+}
+
+// ---------------------------------------------------------------------------
 // Timeline tick generation
 // ---------------------------------------------------------------------------
 
