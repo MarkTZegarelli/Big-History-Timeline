@@ -24,6 +24,7 @@ const HEADER_H     = 38;
 const NOTE_ABOVE_H = 140;
 const NOTE_BELOW_H = 140;
 const TRACK_H      = 4;
+const SIDE_PAD     = 80; // px of breathing room before Big Bang and after Today
 
 const ERA_BANDS = [
   { label: 'Cosmic',     startYears: 13_800_000_000, endYears: 4_600_000_000, color: '#1A1033' },
@@ -67,7 +68,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
   const eraBands = useMemo(() => {
     return ERA_BANDS.map((band) => ({
       ...band,
-      left:  yearToPosition(band.startYears, timelineWidth),
+      left:  yearToPosition(band.startYears, timelineWidth) + SIDE_PAD,
       width: yearToPosition(band.endYears,   timelineWidth) - yearToPosition(band.startYears, timelineWidth),
     }));
   }, [timelineWidth]);
@@ -160,7 +161,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
   const handleTrackClick = useCallback((e) => {
     if (isPinching.current) return;
     const rect    = containerRef.current.getBoundingClientRect();
-    const absX    = containerRef.current.scrollLeft + (e.clientX - rect.left);
+    const absX    = containerRef.current.scrollLeft + (e.clientX - rect.left) - SIDE_PAD;
     const tw      = screenWidthRef.current * zoomRef.current;
     const yearsAgo = positionToYears(absX, Math.max(screenWidthRef.current, tw));
     onTimelinePress(Math.max(0, Math.min(TOTAL_YEARS, yearsAgo)));
@@ -181,7 +182,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
         onTouchEnd={handleTouchEnd}
       >
         {/* Full-width content */}
-        <div style={{ ...styles.content, width: timelineWidth }}>
+        <div style={{ ...styles.content, width: timelineWidth + 2 * SIDE_PAD }}>
 
           {/* Tick-mark header */}
           <TimelineHeader
@@ -219,7 +220,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
                   <TimelineNote
                     key={note.id}
                     note={note}
-                    position={yearToPosition(note.yearsAgo, timelineWidth)}
+                    position={yearToPosition(note.yearsAgo, timelineWidth) + SIDE_PAD}
                     isAbove
                     onPress={() => { onNotePress(note); }}
                   />
@@ -228,9 +229,9 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
 
             {/* Timeline track */}
             <div style={styles.track}>
-              <div style={styles.trackLine} />
-              <div style={{ ...styles.endMarker, right: 0, backgroundColor: '#FF4444' }} title="Today" />
-              <div style={{ ...styles.endMarker, left: 0,  backgroundColor: '#7B68EE' }} title="Big Bang" />
+              <div style={{ ...styles.trackLine, left: SIDE_PAD, right: SIDE_PAD }} />
+              <div style={{ ...styles.endMarker, right: SIDE_PAD, backgroundColor: '#FF4444' }} title="Today" />
+              <div style={{ ...styles.endMarker, left: SIDE_PAD,  backgroundColor: '#7B68EE' }} title="Big Bang" />
             </div>
 
             {/* Notes below */}
@@ -241,7 +242,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
                   <TimelineNote
                     key={note.id}
                     note={note}
-                    position={yearToPosition(note.yearsAgo, timelineWidth)}
+                    position={yearToPosition(note.yearsAgo, timelineWidth) + SIDE_PAD}
                     isAbove={false}
                     onPress={() => { onNotePress(note); }}
                   />
@@ -257,7 +258,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
                   key={b.label}
                   style={{
                     position: 'absolute',
-                    left: b.left,
+                    left: b.left,  // already includes SIDE_PAD offset from eraBands memo
                     width: Math.abs(b.width),
                     display: 'flex',
                     alignItems: 'center',
