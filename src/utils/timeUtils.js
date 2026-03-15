@@ -10,6 +10,7 @@
 export const TOTAL_YEARS = 13_800_000_000; // 13.8 billion years
 export const MIN_ZOOM = 1;
 export const MAX_ZOOM = 50_000_000; // ~sub-year precision per pixel
+export const SIDE_PAD  = 80; // px of breathing room before Big Bang and after Today
 
 // ---------------------------------------------------------------------------
 // Position ↔ Time conversions
@@ -127,8 +128,9 @@ export function getTickInterval(timelineWidth) {
 export function generateTicks(timelineWidth, scrollOffset, screenWidth) {
   const interval = getTickInterval(timelineWidth);
 
-  const leftPos  = scrollOffset;
-  const rightPos = scrollOffset + screenWidth;
+  // Subtract SIDE_PAD so the viewport maps correctly onto the logical year range
+  const leftPos  = scrollOffset - SIDE_PAD;
+  const rightPos = scrollOffset + screenWidth - SIDE_PAD;
 
   // years increase toward the left, so right pos → fewer years
   const rightYears = Math.max(0, positionToYears(leftPos,  timelineWidth));

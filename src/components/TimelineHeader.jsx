@@ -5,7 +5,7 @@
  */
 
 import React, { memo } from 'react';
-import { generateTicks } from '../utils/timeUtils';
+import { generateTicks, SIDE_PAD } from '../utils/timeUtils';
 
 const TimelineHeader = memo(({ timelineWidth, scrollOffset, screenWidth }) => {
   const ticks = generateTicks(timelineWidth, scrollOffset, screenWidth);
@@ -15,7 +15,7 @@ const TimelineHeader = memo(({ timelineWidth, scrollOffset, screenWidth }) => {
       style={{
         height:   38,
         position: 'relative',
-        width:    timelineWidth,
+        width:    timelineWidth + 2 * SIDE_PAD,
       }}
     >
       {ticks.map((tick) => (
@@ -24,7 +24,7 @@ const TimelineHeader = memo(({ timelineWidth, scrollOffset, screenWidth }) => {
           style={{
             position:  'absolute',
             bottom:    0,
-            left:      tick.position - 40, // centre the 80px label on the tick
+            left:      tick.position + SIDE_PAD - 40, // centre the 80px label on the tick
             width:     80,
             display:   'flex',
             flexDirection: 'column',

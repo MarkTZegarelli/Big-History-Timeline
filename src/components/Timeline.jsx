@@ -16,6 +16,7 @@ import {
   TOTAL_YEARS,
   MIN_ZOOM,
   MAX_ZOOM,
+  SIDE_PAD,
   yearToPosition,
   positionToYears,
 } from '../utils/timeUtils';
@@ -24,7 +25,6 @@ const HEADER_H     = 38;
 const NOTE_ABOVE_H = 140;
 const NOTE_BELOW_H = 140;
 const TRACK_H      = 4;
-const SIDE_PAD     = 80; // px of breathing room before Big Bang and after Today
 
 const ERA_BANDS = [
   { label: 'Cosmic',     startYears: 13_800_000_000, endYears: 4_600_000_000, color: '#1A1033' },
