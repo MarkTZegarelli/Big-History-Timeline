@@ -33,8 +33,17 @@ const ERA_BANDS = [
   { label: 'Human',      startYears:      2_800_000, endYears:             0, color: '#1A1A28' },
 ];
 
-function clampZoom(z) {
-  return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
+// Browsers cap DOM element size at ~15-33 M px depending on engine.
+// Keep a conservative limit so timelineWidth never exceeds it.
+const DOM_PX_LIMIT = 14_000_000; // px — safe for Chrome, Firefox, Safari
+
+function clampZoom(z, maxZ = MAX_ZOOM) {
+  return Math.max(MIN_ZOOM, Math.min(maxZ, z));
+}
+
+/** Largest zoom that keeps timelineWidth within DOM_PX_LIMIT for a given base. */
+function safeMaxZoom(base) {
+  return Math.floor(DOM_PX_LIMIT / Math.max(1, base));
 }
 
 export default function Timeline({ notes, onNotePress, onTimelinePress, autoZoom }) {
@@ -69,8 +78,8 @@ export default function Timeline({ notes, onNotePress, onTimelinePress, autoZoom
   });
 
   const updateZoom = useCallback((newZoom) => {
-    const z    = clampZoom(newZoom);
     const base = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
+    const z    = clampZoom(newZoom, safeMaxZoom(base));
     // Pin "Today" (right end) to the right edge of the viewport
     pendingScrollRef.current = Math.max(0, base * z + 2 * SIDE_PAD - screenWidthRef.current);
     zoomRef.current = z;
@@ -112,7 +121,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress, autoZoom
 
       const base     = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
       const oldWidth = base * zoomRef.current;
-      const newZoom  = clampZoom(zoomRef.current * FACTOR);
+      const newZoom  = clampZoom(zoomRef.current * FACTOR, safeMaxZoom(base));
       const newWidth = base * newZoom;
 
       const fixedFrac  = (scrollX + mouseX) / oldWidth;
@@ -182,7 +191,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress, autoZoom
       const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
       const { initialDist, initialZoom, midX, initialScrollX } = pinchRef.current;
       const base       = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
-      const newZoom    = clampZoom(initialZoom * (dist / initialDist));
+      const newZoom    = clampZoom(initialZoom * (dist / initialDist), safeMaxZoom(base));
       const fixedFrac  = (initialScrollX + midX) / (base * initialZoom);
       const newScrollX = Math.max(0, fixedFrac * (base * newZoom) - midX);
       zoomRef.current  = newZoom;
