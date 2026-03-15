@@ -61,7 +61,8 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
     setZoom(z);
   }, []);
 
-  const timelineWidth = Math.max(screenWidthRef.current, screenWidthRef.current * zoom);
+  // At zoom=1 the full content (timeline + 2×SIDE_PAD) fits exactly in the viewport.
+  const timelineWidth = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD) * zoom;
 
   // ── Era bands ─────────────────────────────────────────────────────────────
 
@@ -88,9 +89,10 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
       const mouseX = e.clientX - rect.left;
       const scrollX = el.scrollLeft;
 
-      const oldWidth = screenWidthRef.current * zoomRef.current;
+      const base     = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
+      const oldWidth = base * zoomRef.current;
       const newZoom  = clampZoom(zoomRef.current * FACTOR);
-      const newWidth = screenWidthRef.current * newZoom;
+      const newWidth = base * newZoom;
 
       const fixedFrac  = (scrollX + mouseX) / oldWidth;
       const newScrollX = Math.max(0, fixedFrac * newWidth - mouseX);
@@ -132,8 +134,9 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
     const { initialDist, initialZoom, midX, initialScrollX } = pinchRef.current;
 
     const newZoom   = clampZoom(initialZoom * (dist / initialDist));
-    const oldWidth  = screenWidthRef.current * initialZoom;
-    const newWidth  = screenWidthRef.current * newZoom;
+    const base      = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
+    const oldWidth  = base * initialZoom;
+    const newWidth  = base * newZoom;
     const fixedFrac = (initialScrollX + midX) / oldWidth;
     const newScrollX = Math.max(0, fixedFrac * newWidth - midX);
 
@@ -161,9 +164,9 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
   const handleTrackClick = useCallback((e) => {
     if (isPinching.current) return;
     const rect    = containerRef.current.getBoundingClientRect();
-    const absX    = containerRef.current.scrollLeft + (e.clientX - rect.left) - SIDE_PAD;
-    const tw      = screenWidthRef.current * zoomRef.current;
-    const yearsAgo = positionToYears(absX, Math.max(screenWidthRef.current, tw));
+    const absX     = containerRef.current.scrollLeft + (e.clientX - rect.left) - SIDE_PAD;
+    const tw       = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD) * zoomRef.current;
+    const yearsAgo = positionToYears(absX, tw);
     onTimelinePress(Math.max(0, Math.min(TOTAL_YEARS, yearsAgo)));
   }, [onTimelinePress]);
 
