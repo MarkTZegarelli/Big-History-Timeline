@@ -97,33 +97,81 @@ export function parseYearsAgo(str) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Compact tick label that shows only the magnitude and unit.
+ * Transitions cleanly: 13.8B → 1B → 500M → 1M → 500K → 1K → 500 yr → 1 yr → Today
+ * Never says "X years ago" — that language belongs to note cards, not scale marks.
+ */
+export function formatTickLabel(yearsAgo) {
+  if (yearsAgo === 0) return 'Today';
+
+  if (yearsAgo >= 1_000_000_000) {
+    const v = Math.round((yearsAgo / 1_000_000_000) * 10) / 10;
+    return `${v % 1 === 0 ? Math.round(v) : v}B`;
+  }
+  if (yearsAgo >= 1_000_000) {
+    const v = Math.round((yearsAgo / 1_000_000) * 10) / 10;
+    return `${v % 1 === 0 ? Math.round(v) : v}M`;
+  }
+  if (yearsAgo >= 1_000) {
+    const v = Math.round((yearsAgo / 1_000) * 10) / 10;
+    return `${v % 1 === 0 ? Math.round(v) : v}K`;
+  }
+  return `${Math.round(yearsAgo)} yr`;
+}
+
+/**
  * Choose the best tick interval (in years) for the current zoom so ticks
- * appear roughly every 60–120 px.
+ * appear roughly every 80–160 px, always landing on a round unit boundary
+ * (1/2/5 × power of 10) so labels read naturally as the scale changes.
  */
 export function getTickInterval(timelineWidth) {
   const yearsPerPixel = TOTAL_YEARS / timelineWidth;
-  const targetYearsPerTick = yearsPerPixel * 90; // aim for a tick every 90 px
+  const target = yearsPerPixel * 100; // aim for a tick every ~100 px
 
+  // 1-2-5 ladder across every decade from 1 yr to 10B yr
   const candidates = [
-    1_000_000_000, 500_000_000, 200_000_000, 100_000_000,
-    50_000_000,    20_000_000,  10_000_000,  5_000_000,
-    1_000_000,     500_000,     200_000,     100_000,
-    50_000,        20_000,      10_000,      5_000,
-    1_000,         500,         200,         100,
-    50,            25,          10,          5,           1,
+    10_000_000_000,
+     5_000_000_000,
+     2_000_000_000,
+     1_000_000_000,
+       500_000_000,
+       200_000_000,
+       100_000_000,
+        50_000_000,
+        20_000_000,
+        10_000_000,
+         5_000_000,
+         2_000_000,
+         1_000_000,
+           500_000,
+           200_000,
+           100_000,
+            50_000,
+            20_000,
+            10_000,
+             5_000,
+             2_000,
+             1_000,
+               500,
+               200,
+               100,
+                50,
+                20,
+                10,
+                 5,
+                 2,
+                 1,
   ];
 
   for (const c of candidates) {
-    if (c <= targetYearsPerTick) return c;
+    if (c <= target) return c;
   }
   return 1;
 }
 
 /**
  * Generate ticks visible within the current viewport.
- * @param {number} timelineWidth - total pixel width of the timeline content
- * @param {number} scrollOffset  - current scroll position (pixels)
- * @param {number} screenWidth   - visible width (pixels)
+ * Only produces evenly-spaced scale marks — never event positions.
  */
 export function generateTicks(timelineWidth, scrollOffset, screenWidth) {
   const interval = getTickInterval(timelineWidth);
@@ -132,8 +180,8 @@ export function generateTicks(timelineWidth, scrollOffset, screenWidth) {
   const leftPos  = scrollOffset - SIDE_PAD;
   const rightPos = scrollOffset + screenWidth - SIDE_PAD;
 
-  // years increase toward the left, so right pos → fewer years
-  const rightYears = Math.max(0, positionToYears(leftPos,  timelineWidth));
+  // Years increase toward the left, so leftPos → more years ago
+  const rightYears = Math.max(0,           positionToYears(leftPos,  timelineWidth));
   const leftYears  = Math.min(TOTAL_YEARS, positionToYears(rightPos, timelineWidth));
 
   const start = Math.floor(leftYears  / interval) * interval;
@@ -145,7 +193,7 @@ export function generateTicks(timelineWidth, scrollOffset, screenWidth) {
     ticks.push({
       yearsAgo: clamped,
       position: yearToPosition(clamped, timelineWidth),
-      label: formatYearsAgo(clamped),
+      label:    formatTickLabel(clamped),
     });
   }
   return ticks;
