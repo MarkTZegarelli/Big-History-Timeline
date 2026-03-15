@@ -37,7 +37,7 @@ export const CATEGORY_META = {
 export const CATEGORY_SPAN_YEARS = {
   [CATEGORIES.COSMIC]:     13_800_000_000,
   [CATEGORIES.GEOLOGICAL]:  4_600_000_000,
-  [CATEGORIES.BIOLOGICAL]:  2_100_000_000,
+  [CATEGORIES.BIOLOGICAL]:  3_500_000_000,
   [CATEGORIES.WORLD]:           2_800_000,
   [CATEGORIES.WESTERN]:             2_530,
   [CATEGORIES.US]:                    534,
@@ -148,6 +148,15 @@ export const PREDEFINED_EVENTS = [
 
   // ── BIOLOGICAL ────────────────────────────────────────────────────────────
 
+  {
+    id: 'evt_bio01',
+    title: 'First Prokaryotes',
+    description: `Long before nucleated cells existed, life was dominated by prokaryotes — single-celled organisms (bacteria and archaea) with no membrane-bound nucleus. Fossil filaments preserved in the ~3.5-billion-year-old Apex Chert of Western Australia are among the earliest direct evidence of life. Prokaryotes colonised every available environment on the young Earth, drove the chemistry of the early oceans and atmosphere (including producing the oxygen that would eventually reshape the planet), and ultimately gave rise to eukaryotes through endosymbiosis roughly 1.4 billion years later.`,
+    yearsAgo: 3_500_000_000,
+    category: CATEGORIES.BIOLOGICAL,
+    isPredefined: true,
+    isMajor: true,
+  },
   {
     id: 'evt_10',
     title: 'First Eukaryotes',
