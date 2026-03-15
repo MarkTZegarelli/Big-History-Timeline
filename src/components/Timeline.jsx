@@ -56,9 +56,15 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
   }, []);
 
   const updateZoom = useCallback((newZoom) => {
-    const z = clampZoom(newZoom);
+    const z    = clampZoom(newZoom);
+    const base = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
+    // Pin "Today" (right end) to the right edge of the viewport
+    const newScrollLeft = Math.max(0, base * z + 2 * SIDE_PAD - screenWidthRef.current);
     zoomRef.current = z;
     setZoom(z);
+    requestAnimationFrame(() => {
+      if (containerRef.current) containerRef.current.scrollLeft = newScrollLeft;
+    });
   }, []);
 
   // At zoom=1 the full content (timeline + 2×SIDE_PAD) fits exactly in the viewport.
