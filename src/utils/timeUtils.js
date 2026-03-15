@@ -193,22 +193,34 @@ export function generateTicks(timelineWidth, scrollOffset, screenWidth) {
   const leftPos  = scrollOffset - SIDE_PAD;
   const rightPos = scrollOffset + screenWidth - SIDE_PAD;
 
-  // Years increase toward the left, so leftPos → more years ago
-  const rightYears = Math.max(0,           positionToYears(leftPos,  timelineWidth));
-  const leftYears  = Math.min(TOTAL_YEARS, positionToYears(rightPos, timelineWidth));
+  // Raw (unclamped) years at each viewport edge.
+  // rightPos may extend past Today (negative years) and leftPos past the Big Bang.
+  const rawRightYears = positionToYears(leftPos,  timelineWidth); // may exceed TOTAL_YEARS
+  const rawLeftYears  = positionToYears(rightPos, timelineWidth); // may be negative
 
-  const start = Math.floor(leftYears  / interval) * interval;
-  const end   = Math.ceil (rightYears / interval) * interval;
+  // Clamp the loop range to [0, TOTAL_YEARS] so we never produce duplicate ticks
+  // by clamping out-of-range y values.
+  const start = Math.floor(Math.max(0,           rawLeftYears)  / interval) * interval;
+  const end   = Math.ceil (Math.min(TOTAL_YEARS, rawRightYears) / interval) * interval;
 
   const ticks = [];
-  for (let y = start; y <= end + interval * 0.01; y += interval) {
-    const clamped = Math.max(0, Math.min(TOTAL_YEARS, y));
-    ticks.push({
-      yearsAgo: clamped,
-      position: yearToPosition(clamped, timelineWidth),
-      label:    formatTickLabel(clamped),
-    });
+
+  // Boundary: Today (yearsAgo = 0) — added once when right side of timeline is in view
+  if (rawLeftYears <= 0) {
+    ticks.push({ yearsAgo: 0, position: yearToPosition(0, timelineWidth), label: formatTickLabel(0) });
   }
+
+  // Interior ticks — skip exact boundary values (already handled above/below)
+  for (let y = start; y <= end + interval * 0.01; y += interval) {
+    if (y <= 0 || y >= TOTAL_YEARS) continue;
+    ticks.push({ yearsAgo: y, position: yearToPosition(y, timelineWidth), label: formatTickLabel(y) });
+  }
+
+  // Boundary: Big Bang (yearsAgo = TOTAL_YEARS) — added once when left side is in view
+  if (rawRightYears >= TOTAL_YEARS) {
+    ticks.push({ yearsAgo: TOTAL_YEARS, position: yearToPosition(TOTAL_YEARS, timelineWidth), label: formatTickLabel(TOTAL_YEARS) });
+  }
+
   return ticks;
 }
 
