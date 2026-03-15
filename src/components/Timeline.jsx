@@ -109,47 +109,82 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
     return () => el.removeEventListener('wheel', onWheel);
   }, []);
 
-  // ── Touch pinch-to-zoom ──────────────────────────────────────────────────
+  // ── Touch handling (non-passive so preventDefault works) ────────────────
+  // Registered via addEventListener so we can pass { passive: false }.
+  // React synthetic touch props are passive and cannot call preventDefault,
+  // which would let the browser hijack pinch-zoom and vertical scroll.
 
-  const handleTouchStart = useCallback((e) => {
-    if (e.touches.length !== 2) return;
-    isPinching.current = true;
-    const t1 = e.touches[0], t2 = e.touches[1];
-    const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-    const midX = (t1.clientX + t2.clientX) / 2 -
-                 containerRef.current.getBoundingClientRect().left;
-    pinchRef.current = {
-      initialDist:    dist,
-      initialZoom:    zoomRef.current,
-      midX,
-      initialScrollX: containerRef.current.scrollLeft,
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    // Track single-touch start position to detect vertical drags
+    let t1StartX = 0, t1StartY = 0, t1Locked = null; // null | 'h' | 'v'
+
+    const onTouchStart = (e) => {
+      if (e.touches.length === 1) {
+        t1StartX = e.touches[0].clientX;
+        t1StartY = e.touches[0].clientY;
+        t1Locked = null;
+      }
+      if (e.touches.length === 2) {
+        e.preventDefault(); // block browser pinch-zoom from the first frame
+        isPinching.current = true;
+        const a = e.touches[0], b = e.touches[1];
+        pinchRef.current = {
+          initialDist:    Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY),
+          initialZoom:    zoomRef.current,
+          midX:           (a.clientX + b.clientX) / 2 - el.getBoundingClientRect().left,
+          initialScrollX: el.scrollLeft,
+        };
+      }
     };
-  }, []);
 
-  const handleTouchMove = useCallback((e) => {
-    if (!isPinching.current || !pinchRef.current || e.touches.length < 2) return;
-    e.preventDefault();
-    const t1 = e.touches[0], t2 = e.touches[1];
-    const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-    const { initialDist, initialZoom, midX, initialScrollX } = pinchRef.current;
+    const onTouchMove = (e) => {
+      if (e.touches.length === 1 && t1Locked === null) {
+        const dx = Math.abs(e.touches[0].clientX - t1StartX);
+        const dy = Math.abs(e.touches[0].clientY - t1StartY);
+        if (dx > 4 || dy > 4) t1Locked = dx >= dy ? 'h' : 'v';
+      }
+      // Block vertical single-finger scroll bubbling up to the page
+      if (e.touches.length === 1 && t1Locked === 'v') {
+        e.preventDefault();
+        return;
+      }
+      // Block all browser handling of multi-touch (pinch-zoom, page scroll)
+      if (e.touches.length >= 2) {
+        e.preventDefault();
+      }
+      if (!isPinching.current || !pinchRef.current || e.touches.length < 2) return;
 
-    const newZoom   = clampZoom(initialZoom * (dist / initialDist));
-    const base      = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
-    const oldWidth  = base * initialZoom;
-    const newWidth  = base * newZoom;
-    const fixedFrac = (initialScrollX + midX) / oldWidth;
-    const newScrollX = Math.max(0, fixedFrac * newWidth - midX);
+      const a = e.touches[0], b = e.touches[1];
+      const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      const { initialDist, initialZoom, midX, initialScrollX } = pinchRef.current;
+      const base       = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
+      const newZoom    = clampZoom(initialZoom * (dist / initialDist));
+      const fixedFrac  = (initialScrollX + midX) / (base * initialZoom);
+      const newScrollX = Math.max(0, fixedFrac * (base * newZoom) - midX);
+      zoomRef.current  = newZoom;
+      setZoom(newZoom);
+      requestAnimationFrame(() => {
+        if (containerRef.current) containerRef.current.scrollLeft = newScrollX;
+      });
+    };
 
-    zoomRef.current = newZoom;
-    setZoom(newZoom);
-    requestAnimationFrame(() => {
-      if (containerRef.current) containerRef.current.scrollLeft = newScrollX;
-    });
-  }, []);
+    const onTouchEnd = () => {
+      isPinching.current = false;
+      pinchRef.current   = null;
+      t1Locked           = null;
+    };
 
-  const handleTouchEnd = useCallback(() => {
-    isPinching.current = false;
-    pinchRef.current   = null;
+    el.addEventListener('touchstart', onTouchStart, { passive: false });
+    el.addEventListener('touchmove',  onTouchMove,  { passive: false });
+    el.addEventListener('touchend',   onTouchEnd);
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove',  onTouchMove);
+      el.removeEventListener('touchend',   onTouchEnd);
+    };
   }, []);
 
   // ── Scroll tracking for header ticks ─────────────────────────────────────
@@ -190,9 +225,6 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
         className="timeline-scroll"
         style={styles.scrollContainer}
         onScroll={handleScroll}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
         {/* Full-width content */}
         <div style={{ ...styles.content, width: timelineWidth + 2 * SIDE_PAD }}>
