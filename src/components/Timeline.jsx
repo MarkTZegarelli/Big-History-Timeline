@@ -3,7 +3,7 @@
  *
  * Horizontal scrollable timeline with zoom support.
  *
- * Zoom:   Ctrl+Wheel (desktop) or pinch gesture (touch)
+ * Zoom:   Wheel (desktop, right-anchored) or pinch gesture (touch)
  * Scroll: native horizontal scroll (trackpad / scrollbar / drag)
  * Add:    click anywhere on the track to create a note
  */
@@ -111,28 +111,20 @@ export default function Timeline({ notes, onNotePress, onTimelinePress, autoZoom
     if (!el) return;
 
     const onWheel = (e) => {
-      if (!e.ctrlKey && !e.metaKey) return; // let natural horizontal scroll happen
+      // Let trackpad horizontal swipes scroll the timeline naturally.
+      // Only intercept primarily-vertical wheel motion for zoom.
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+
       e.preventDefault();
 
-      const FACTOR = e.deltaY > 0 ? 1 / 1.25 : 1.25;
-      const rect   = el.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const scrollX = el.scrollLeft;
+      const FACTOR  = e.deltaY > 0 ? 1 / 1.25 : 1.25;
+      const base    = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
+      const newZoom = clampZoom(zoomRef.current * FACTOR, safeMaxZoom(base));
 
-      const base     = Math.max(1, screenWidthRef.current - 2 * SIDE_PAD);
-      const oldWidth = base * zoomRef.current;
-      const newZoom  = clampZoom(zoomRef.current * FACTOR, safeMaxZoom(base));
-      const newWidth = base * newZoom;
-
-      const fixedFrac  = (scrollX + mouseX) / oldWidth;
-      const newScrollX = Math.max(0, fixedFrac * newWidth - mouseX);
-
+      // Right-anchored: keep Today at the right edge of the viewport
+      pendingScrollRef.current = Math.max(0, base * newZoom + 2 * SIDE_PAD - screenWidthRef.current);
       zoomRef.current = newZoom;
       setZoom(newZoom);
-
-      requestAnimationFrame(() => {
-        if (containerRef.current) containerRef.current.scrollLeft = newScrollX;
-      });
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
@@ -342,7 +334,7 @@ export default function Timeline({ notes, onNotePress, onTimelinePress, autoZoom
           {/* Tap hint */}
           {zoom <= 1.2 && (
             <div style={styles.tapHint} aria-hidden>
-              Ctrl+Scroll or pinch to zoom · Click track to add note
+              Scroll to zoom · pinch to zoom · Click track to add note
             </div>
           )}
         </div>
