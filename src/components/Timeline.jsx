@@ -174,6 +174,16 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
 
   return (
     <div style={styles.wrapper}>
+
+      {/* Tick-mark header — fixed above the scroll area, doesn't move horizontally */}
+      <div style={styles.header}>
+        <TimelineHeader
+          timelineWidth={timelineWidth}
+          scrollOffset={scrollOffset}
+          screenWidth={screenWidthRef.current}
+        />
+      </div>
+
       {/* Scrollable container */}
       <div
         ref={containerRef}
@@ -186,13 +196,6 @@ export default function Timeline({ notes, onNotePress, onTimelinePress }) {
       >
         {/* Full-width content */}
         <div style={{ ...styles.content, width: timelineWidth + 2 * SIDE_PAD }}>
-
-          {/* Tick-mark header */}
-          <TimelineHeader
-            timelineWidth={timelineWidth}
-            scrollOffset={scrollOffset}
-            screenWidth={screenWidthRef.current}
-          />
 
           {/* Era colour bands behind the track */}
           <div style={styles.eraBandRow}>
@@ -301,6 +304,14 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
   },
+  header: {
+    height: HEADER_H,
+    flexShrink: 0,
+    position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: '#0D0D1A',
+    borderBottom: '1px solid #1A1A2E',
+  },
   scrollContainer: {
     flex: 1,
     height: 0,             // flex-grow sets the height; content can't override it
@@ -315,14 +326,14 @@ const styles = {
   },
   eraBandRow: {
     position: 'absolute',
-    top: HEADER_H,
+    top: 0,
     left: 0,
     right: 0,
     height: NOTE_ABOVE_H + TRACK_H + 20 + NOTE_BELOW_H,
     pointerEvents: 'none',
   },
   trackAndNotesArea: {
-    marginTop: HEADER_H,
+    marginTop: 0,
     cursor: 'crosshair',
   },
   notesAbove: {

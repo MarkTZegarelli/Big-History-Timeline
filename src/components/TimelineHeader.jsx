@@ -15,7 +15,7 @@ const TimelineHeader = memo(({ timelineWidth, scrollOffset, screenWidth }) => {
       style={{
         height:   38,
         position: 'relative',
-        width:    timelineWidth + 2 * SIDE_PAD,
+        width:    '100%',
       }}
     >
       {ticks.map((tick) => (
@@ -24,7 +24,8 @@ const TimelineHeader = memo(({ timelineWidth, scrollOffset, screenWidth }) => {
           style={{
             position:  'absolute',
             bottom:    0,
-            left:      tick.position + SIDE_PAD - 40, // centre the 80px label on the tick
+            // Convert content coords → viewport coords by subtracting scrollOffset
+            left:      tick.position + SIDE_PAD - scrollOffset - 40,
             width:     80,
             display:   'flex',
             flexDirection: 'column',

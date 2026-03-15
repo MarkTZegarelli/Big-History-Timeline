@@ -120,6 +120,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
+    overflow: 'hidden',
     backgroundColor: '#0D0D1A',
   },
   topBar: {
