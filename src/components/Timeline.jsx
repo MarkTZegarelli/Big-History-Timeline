@@ -111,9 +111,9 @@ export default function Timeline({ notes, onNotePress, onTimelinePress, autoZoom
     if (!el) return;
 
     const onWheel = (e) => {
-      // Let trackpad horizontal swipes scroll the timeline naturally.
-      // Only intercept primarily-vertical wheel motion for zoom.
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      // Pure horizontal swipe (deltaY === 0) → let it scroll the timeline.
+      // Any event with a vertical component is zoom, regardless of deltaX.
+      if (e.deltaY === 0) return;
 
       e.preventDefault();
 
